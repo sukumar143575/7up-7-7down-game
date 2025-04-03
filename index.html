@@ -67,7 +67,7 @@
         font-size: 40px;
         font-weight: bold;
     }
-
+    
     @media (max-width: 600px) {
     .parent {
         flex-direction: column;
@@ -125,7 +125,17 @@
         function gain() {
             let gainSound = new Audio('win.mp3');
             gainSound.play();
-        }
+    // Create an img element dynamically
+    let gif = document.createElement('img');
+    gif.src = 'win-video.gif'; // Replace with your actual GIF file
+    gif.style.width = "300px"; // Adjust as needed
+    gif.style.height = "auto";
+
+    // Append the GIF to the body or a specific container
+    document.body.appendChild(gif);
+
+
+    }
 
         function loss() {
             let lossSound = new Audio('lose.mp3');
