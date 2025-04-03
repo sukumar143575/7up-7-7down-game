@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7up 7down</title>
+</head>
+<style>
+    body {
+        /* background-color: royalblue; */
+        text-align: center;
+        font-family: sans-serif;
+        color: white;
+        background-image: url('bg.jpeg');
+        background-size: cover; /* Ensures the image covers the entire background */
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .parent {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+    }
+    .card {
+        display: flex;
+        justify-content: center;
+        height: 150px;
+        width: 150px;
+        background-image: url('card.jpg');
+        background-size: cover; /* Ensures the image covers the entire background */
+        background-position: center;
+        background-repeat: no-repeat;
+        cursor: pointer;
+      
+    }
+    .card:hover{
+        box-shadow: 5px 5px 10px white;
+    }
+    input {
+        margin-top: 10px;
+        height: 50px;
+        width: 300px;
+        font-size: 40px;
+        border-radius: 10px;
+        
+    }
+    input:focus {
+        outline: none;
+    }
+    button {
+        margin-top: 10px;
+        background-color:green;
+        border: none;
+        border-radius: 5px;
+        font-size: 30px;
+        height: 50px;
+        width: 280px;
+        color: white;
+        cursor: pointer;
+    }
+    .img {
+        margin-top: 10px;
+        margin-left: 30px;
+    }
+    .text-bg {
+        color: teal;
+        font-size: 40px;
+        font-weight: bold;
+    }
+
+</style>
+<body>
+    <div class="container">
+        <h1 class="text-bg">7Up 7 7Down Game</h1>
+        <div class="parent">
+            <div class="card card1">
+                <h2>7Up <br> 2x</h2>
+            </div>
+            <div class="card card2">
+                <h2>7 <br> 3x</h2>
+            </div>
+            <div class="card card3">
+                <h2>7Down <br> 2x</h2>
+            </div>
+        </div>
+        <img src="dice-game.gif" class="img img1" width="100px" height="100px">
+        <img src="dice-game.gif" class="img img2" width="100px" height="100px"><br>
+        <input type="text" id="input" placeholder="Bet Amount"><br>
+        <button onclick="rollon()">Roll The Dice</button>
+
+        <h1 id="result"></h1>
+        <h1 id="balance">Net Balance = Rs. 0</h1>
+    </div>
+
+    <script>
+        let choice = "";
+        let balance = 0;
+
+        function gain() {
+            let gainSound = new Audio('win.mp3');
+            gainSound.play();
+        }
+
+        function loss() {
+            let lossSound = new Audio('lose.mp3');
+            lossSound.play();
+        }
+
+        document.querySelector('.card1').addEventListener('click', () => selectChoice("7up"));
+        document.querySelector('.card2').addEventListener('click', () => selectChoice("7"));
+        document.querySelector('.card3').addEventListener('click', () => selectChoice("7Down"));
+
+        function selectChoice(selected) {
+            choice = selected;
+            document.querySelectorAll('.card').forEach(card => {
+                if (!card.classList.contains(`card${choice === "7up" ? 1 : choice === "7" ? 2 : 3}`)) {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        function rollon() {
+            if (!choice) {
+                alert("Please select 7Up, 7, or 7Down before rolling!");
+                return;
+            }
+
+            let bet = Number(document.getElementById('input').value);
+            if (bet <= 0 || isNaN(bet)) {
+                alert("Enter a valid bet amount.");
+                return;
+            }
+
+            let dice1 = Math.floor(Math.random() * 6) + 1;
+            let dice2 = Math.floor(Math.random() * 6) + 1;
+            let total = dice1 + dice2;
+
+            document.querySelector('.img1').setAttribute('src', `dice-${dice1}.jpg`);
+            document.querySelector('.img2').setAttribute('src', `dice-${dice2}.jpg`);
+
+            let resultMessage = "";
+            let multiplier = 0;
+
+            if (total > 7 && choice === "7up") {
+                multiplier = 2;
+            } else if (total === 7 && choice === "7") {
+                multiplier = 3;
+            } else if (total < 7 && choice === "7Down") {
+                multiplier = 2;
+            }
+
+            if (multiplier > 0) {
+                gain();
+                let winnings = bet * multiplier;
+                balance += winnings;
+                resultMessage = `You chose ${choice}, dice total is ${total}. You won ${winnings}! 🎉`;
+            } else {
+                loss();
+                balance -= bet;
+                resultMessage = `You chose ${choice}, dice total is ${total}. You lost ${bet}. 😢`;
+            }
+
+            document.getElementById('result').innerText = resultMessage;
+            document.getElementById('balance').innerText = `Net Balance = Rs.${balance}`;
+
+            // Reset choices so player can pick again
+            document.querySelectorAll('.card').forEach(card => card.style.display = "flex");
+            choice = "";
+        }
+    </script>
+</body>
+</html>
